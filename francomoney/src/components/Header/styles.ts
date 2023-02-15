@@ -28,4 +28,17 @@ export const ContainerTwo = styled.div`
             filter: brightness(0.9);
         }
     }
+    .div-logo{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 2rem;
+
+        span{
+            color: var(--green);
+        }
+    }
 `;
