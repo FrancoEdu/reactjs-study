@@ -10,8 +10,13 @@ interface Transaction {
     type: string,
     createdAt: string
 }
-
-type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
+// interface TransactionInput{
+//     title: string,
+//     amount: number,
+//     category: string,
+//     type: string,
+// } abaixo é a mesma coisa
+type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>; //Omitindo propriedades de dentro da interafce Transactions
 
 interface TransactionsProviderProps{
     children: ReactNode;
@@ -19,7 +24,7 @@ interface TransactionsProviderProps{
 
 interface TransactionsContextData {
     transactions: Transaction[];
-    createTransaction: (transaction: TransactionInput) => void;
+    createTransaction: (transaction: TransactionInput) => Promise<void>; //função que recebe o transactiondo tipo TransactionInput e retorna void
 }
 
 export const TransactionsContext = createContext<TransactionsContextData>(
@@ -33,8 +38,17 @@ export function TransactionsProvider({children}: TransactionsProviderProps){
         api.get('transactions').then(response =>setTransactions(response.data.transactions))
     },[]) //,[] se vazio sigmifica que executara uma unica vez até que se mude ao valor
 
-    function createTransaction(transaction: TransactionInput){
-        api.post('/transactions', transaction)
+    async function createTransaction(transactionInput: TransactionInput){
+        const response = await api.post('/transactions', {
+            ...transactionInput,
+            createdAt: new Date()
+        })
+        const { transaction } = response.data
+
+        setTransactions([
+            ...transactions, //... inserção de tranmsações dentro do vetor, o ... indica cópia de tudo anterior ao novo dado, e em seguida inclui o novo dado
+            transaction
+        ]);
     }
 
     return(
